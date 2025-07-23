@@ -18,7 +18,7 @@ class SQLAlchemyUtils:
         :param db_url: 形如'sqlite:///test.db'
         """
         self.engine = create_engine(db_url)
-        with self.engine.connect() as conn:
+        with self.engine.begin() as conn:
             conn.execute(text("PRAGMA journal_mode=WAL;"))
 
     @db_exception_handler
@@ -27,9 +27,8 @@ class SQLAlchemyUtils:
         执行建表语句
         :param sql: 建表SQL语句
         """
-        with self.engine.connect() as conn:
+        with self.engine.begin() as conn:
             conn.execute(text(sql))
-            conn.commit()
 
     @db_exception_handler
     def execute(self, sql: str, params: dict = None):
@@ -39,9 +38,8 @@ class SQLAlchemyUtils:
         :param params: 参数字典
         :return: 返回执行结果对象
         """
-        with self.engine.connect() as conn:
+        with self.engine.begin() as conn:
             result = conn.execute(text(sql), params or {})
-            conn.commit()
         return result
 
     @db_exception_handler
@@ -52,10 +50,12 @@ class SQLAlchemyUtils:
         :param params_list: 参数字典组成的列表，例如: [{'name': 'Tom', 'age': 9}, {'name': 'Jerry', 'age': 10}]
         :return: 返回执行结果对象
         """
-        with self.engine.connect() as conn:
+        if not params_list:
+            print("⚠️ 批量操作参数为空，未执行SQL")
+            return None
+        with self.engine.begin() as conn:
             result = conn.execute(text(sql), params_list)
-            conn.commit()
-        print('wwwwwwwwwwwwwwwwww',result.rowcount)
+        print(f"✅ 批量执行完成，共影响 {result.rowcount} 行")
         return result
 
     @db_exception_handler
