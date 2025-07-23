@@ -12,6 +12,10 @@ def db_exception_handler(func):
     return wrapper
 
 class SQLAlchemyUtils:
+    # 方便使用
+    db_path = 'test_wal_demo.db'
+    db_url = f'sqlite:///{db_path}'
+
     def __init__(self, db_url):
         """
         初始化数据库连接，并设置WAL模式（仅适用于SQLite）
@@ -88,9 +92,8 @@ class SQLAlchemyUtils:
 # 测试用例
 if __name__ == "__main__":
     # 1. 初始化数据库工具类（确保路径在你能看到的文件夹）
-    db_path = 'test_wal_demo.db'
-    db_url = f'sqlite:///{db_path}'
-    db = SQLAlchemyUtils(db_url)
+
+    db = SQLAlchemyUtils(SQLAlchemyUtils.db_url)
 
     # 2. 创建表
     db.create_table("""
