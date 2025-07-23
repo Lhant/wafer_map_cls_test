@@ -25,6 +25,10 @@ class SQLAlchemyUtils:
         try:
             with self.engine.begin() as conn:
                 conn.execute(text("PRAGMA journal_mode=WAL;"))
+                conn.execute(text("PRAGMA journal_mode=WAL"))
+                conn.execute(text("PRAGMA synchronous=NORMAL"))
+                conn.execute(text("PRAGMA wal_autocheckpoint=5000"))
+                conn.execute(text("PRAGMA busy_timeout=3000"))
         except Exception as e:
             print(f"WAL模式设置失败(可能不是SQLite): {e}")
 
