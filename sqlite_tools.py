@@ -18,8 +18,11 @@ class SQLAlchemyUtils:
         :param db_url: 形如'sqlite:///test.db'
         """
         self.engine = create_engine(db_url)
-        with self.engine.begin() as conn:
-            conn.execute(text("PRAGMA journal_mode=WAL;"))
+        try:
+            with self.engine.begin() as conn:
+                conn.execute(text("PRAGMA journal_mode=WAL;"))
+        except Exception as e:
+            print(f"WAL模式设置失败(可能不是SQLite): {e}")
 
     @db_exception_handler
     def create_table(self, sql: str):
@@ -121,3 +124,5 @@ if __name__ == "__main__":
     df2 = db.query("SELECT * FROM users")
     print("\n更新和删除后的数据：")
     print(df2)
+
+    print(db.table_exists('users'))
