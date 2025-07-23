@@ -69,6 +69,18 @@ class SQLAlchemyUtils:
         df = pd.read_sql(sql, self.engine, params=params)
         return df
 
+    @db_exception_handler
+    def vacuum(self):
+        with self.engine.begin() as conn:
+            conn.execute(text("VACUUM"))
+
+    @db_exception_handler
+    def table_exists(self, table_name: str) -> bool:
+        sql = "SELECT name FROM sqlite_master WHERE type='table' AND name=:name"
+        df = self.query(sql, {"name": table_name})
+        return not df.empty
+
+
 # ---------------------------------------------------------
 # 测试用例
 if __name__ == "__main__":
