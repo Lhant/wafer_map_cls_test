@@ -1,3 +1,5 @@
+import os
+
 import pandas as pd
 from sqlalchemy import create_engine, text
 
@@ -13,7 +15,8 @@ def db_exception_handler(func):
 
 class SQLAlchemyUtils:
     # 方便使用
-    db_path = 'test_wal_demo.db'
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    db_path = os.path.join(base_dir, 'ay_web.db')
     db_url = f'sqlite:///{db_path}'
 
     def __init__(self, db_url):
